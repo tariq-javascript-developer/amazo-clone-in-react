@@ -2,15 +2,15 @@ import firebase from "firebase"
 
 
 const firebaseApp = firebase.initializeApp({
-  apiKey: "AIzaSyCeJYgxmnUyZHOqgf8yC-BREQ7ORN1gNN4",
-  authDomain: "clone-aff23.firebaseapp.com",
-  databaseURL: "https://clone-aff23.firebaseio.com",
-  projectId: "clone-aff23",
-  storageBucket: "clone-aff23.appspot.com",
-  messagingSenderId: "833505447850",
-  appId: "1:833505447850:web:b781593f9f45db933225d3",
-  measurementId: "G-J2EL1XZM7E"
+  apiKey: "AIzaSyDqlxI5wdNuWr4kbG6D5E7pLqLyB_xniwE",
+  authDomain: "clone-7259a.firebaseapp.com",
+  databaseURL: "https://clone-7259a.firebaseio.com",
+  projectId: "clone-7259a",
+  storageBucket: "clone-7259a.appspot.com",
+  messagingSenderId: "885494446339",
+  appId: "1:885494446339:web:2d5a7a63bd536b765e9136",
+  measurementId: "G-03GJSK3WFS"
   });
 
-const auth = firebaseApp.auth();
+const auth = firebase.auth();
 export { auth };

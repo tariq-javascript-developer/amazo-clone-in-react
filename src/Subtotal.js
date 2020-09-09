@@ -5,7 +5,7 @@ import { useStateValue } from './StateProvider'
 import { getBasketTotal } from './reducer'
 
 function Subtotal() {
-    const [{ basket }] = useStateValue();
+    const [{ basket }, dispatch] = useStateValue();
     return (
         <div className="subtotal">
             {/* price */}
@@ -13,7 +13,7 @@ function Subtotal() {
 
                 renderText={(value)=>(
                     <>
-                        <p>Subtotal ({basket.lenght} items): <strong>{` ${value} `}</strong>
+                        <p>Subtotal ({basket.length} items): <strong>{` ${value} `}</strong>
                         </p>
 
                         <small className="subtotal__gift">
