@@ -7,7 +7,7 @@ import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import CurrencyFormat from "react-currency-format";
 import { getBasketTotal } from "./reducer";
 import axios from "./axios";
-import db from './firebase'
+import { db } from "./firebase";
 
 function Payment() {
   const [{ basket, user }, dispatch] = useStateValue();
@@ -25,42 +25,48 @@ function Payment() {
   useEffect(() => {
     const getClientSecret = async () => {
       const response = await axios({
-        method: 'post',
-        url: `/payments/create?total=${getBasketTotal(basket) * 100 }`,
+        method: "post",
+        url: `/payments/create?total=${getBasketTotal(basket) * 100}`,
       });
-      setClientSecret(response.data.clientSecret)
-    }
-
+      setClientSecret(response.data.clientSecret);
+    };
     getClientSecret();
-
   }, [basket]);
-  console.log("THE SECRET IS >>>", clientSecret);
-
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     setProcessing(true);
-    
-    const payload  = await stripe.confirmCardPayment(clientSecret, {
-      payment_method:{
-          card: elements.getElement(CardElement)
+
+    const payload = await stripe
+      .confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
         },
-      }).then(({ paymentIntent }) => {
+      })
+      .then(({ paymentIntent }) => {
+        db.collection("users")
+          .doc(user?.uid)
+          .collection("orders")
+          .doc(paymentIntent.id)
+          .set({
+            basket: basket,
+            amount: paymentIntent.amount,
+            created: paymentIntent.created,
+          });
         setSucceeded(true);
         setError(null);
         setProcessing(false);
-        
+
         dispatch({
-          type:'EMPTY_BASKET'
-        })
+          type: "EMPTY_BASKET",
+        });
 
         history.replace("/orders");
       });
-  }
-  const handleChange = event => {
+  };
+  const handleChange = (event) => {
     setDisabled(event.empty);
     setError(event.error ? event.error.message : "");
-  }
+  };
   return (
     <div className="payment">
       <div className="payment__container">
@@ -106,9 +112,7 @@ function Payment() {
               <CardElement onChange={handleChange} />
               <div className="payment__priceContainer">
                 <CurrencyFormat
-                  renderText={(value) => (
-                    <h3>Order Total: {value}</h3>  
-                  )}
+                  renderText={(value) => <h3>Order Total: {value}</h3>}
                   decimalScale={2}
                   value={getBasketTotal(basket)}
                   displayType={"text"}
@@ -116,8 +120,7 @@ function Payment() {
                   prefix={"$"}
                 />
                 <button disabled={processing || disabled || succeeded}>
-                  <span>{processing ? <p>Processing</p> :
-                   "Buy Now"}</span>
+                  <span>{processing ? <p>Processing</p> : "Buy Now"}</span>
                 </button>
               </div>
               {/* Error */}
